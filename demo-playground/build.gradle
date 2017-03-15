@@ -9,7 +9,7 @@ repositories {
 dependencies {
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.1.4'
     compile 'com.commonsware.cwac:provider:0.4.4'
-    compile 'com.android.support:support-v13:25.1.1'
+    compile "com.android.support:support-v13:$support_libraries_version"
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     debugCompile project(':cam2')
@@ -17,11 +17,11 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion compile_sdk
+    buildToolsVersion "$build_tools_version"
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion min_sdk
+        targetSdkVersion target_sdk
     }
 }
