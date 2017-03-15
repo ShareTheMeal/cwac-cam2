@@ -17,6 +17,7 @@ package com.commonsware.cwac.cam2;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -190,7 +191,7 @@ abstract public class AbstractCameraActivity extends Activity {
   /**
    * @return a CameraFragment for the given circumstances
    */
-  abstract protected CameraFragment buildFragment();
+  abstract protected CameraFragmentInterface buildFragment();
 
   /**
    * @return array of the names of the permissions needed by
@@ -208,7 +209,7 @@ abstract public class AbstractCameraActivity extends Activity {
 
   protected static final String TAG_CAMERA=CameraFragment.class.getCanonicalName();
   private static final int REQUEST_PERMS=13401;
-  protected CameraFragment cameraFrag;
+  protected CameraFragmentInterface cameraFrag;
   public static final EventBus BUS=new EventBus();
 
   /**
@@ -379,7 +380,7 @@ abstract public class AbstractCameraActivity extends Activity {
   }
 
   protected void init() {
-    cameraFrag=(CameraFragment)getFragmentManager().findFragmentByTag(TAG_CAMERA);
+    cameraFrag=(CameraFragmentInterface)getFragmentManager().findFragmentByTag(TAG_CAMERA);
 
     boolean fragNeedsToBeAdded=false;
 
@@ -428,7 +429,7 @@ abstract public class AbstractCameraActivity extends Activity {
     if (fragNeedsToBeAdded) {
       getFragmentManager()
         .beginTransaction()
-        .add(android.R.id.content, cameraFrag, TAG_CAMERA)
+        .add(android.R.id.content, (Fragment) cameraFrag, TAG_CAMERA)
         .commit();
     }
   }

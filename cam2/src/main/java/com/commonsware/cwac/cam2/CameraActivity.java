@@ -15,6 +15,7 @@
 package com.commonsware.cwac.cam2;
 
 import android.Manifest;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -120,7 +121,7 @@ public class CameraActivity extends AbstractCameraActivity
       getFragmentManager()
           .beginTransaction()
           .hide(confirmFrag)
-          .show(cameraFrag)
+          .show((Fragment) cameraFrag)
           .commit();
     }
   }
@@ -135,7 +136,7 @@ public class CameraActivity extends AbstractCameraActivity
 
         getFragmentManager()
           .beginTransaction()
-          .hide(cameraFrag)
+          .hide((Fragment) cameraFrag)
           .show(confirmFrag)
           .commit();
       }
@@ -153,7 +154,7 @@ public class CameraActivity extends AbstractCameraActivity
     getFragmentManager()
         .beginTransaction()
         .hide(confirmFrag)
-        .show(cameraFrag)
+        .show((Fragment) cameraFrag)
         .commit();
   }
 
@@ -243,7 +244,7 @@ public class CameraActivity extends AbstractCameraActivity
       getFragmentManager()
         .beginTransaction()
         .remove(confirmFrag)
-        .remove(cameraFrag)
+        .remove((Fragment) cameraFrag)
         .commit();
     }
   }

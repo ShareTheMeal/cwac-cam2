@@ -53,7 +53,7 @@ import java.util.LinkedList;
  * you (or the user) to take a picture.
  */
 public class CameraFragment extends Fragment
-  implements ReverseChronometer.Listener {
+  implements ReverseChronometer.Listener, CameraFragmentInterface {
   private static final String ARG_OUTPUT="output";
   private static final String ARG_UPDATE_MEDIA_STORE=
     "updateMediaStore";
@@ -475,7 +475,7 @@ public class CameraFragment extends Fragment
     zoomSlider.setEnabled(true);
   }
 
-  protected void performCameraAction() {
+  public void performCameraAction() {
     if (isVideo()) {
       recordVideo();
     }
