@@ -21,7 +21,7 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 public class ReverseChronometer extends TextView implements Runnable {
-  interface Listener {
+  public interface Listener {
     void onCountdownCompleted();
   }
 
