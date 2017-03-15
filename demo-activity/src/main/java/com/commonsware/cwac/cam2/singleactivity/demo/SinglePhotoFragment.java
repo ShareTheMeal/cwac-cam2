@@ -6,6 +6,7 @@ import com.commonsware.cwac.cam2.CameraEngine;
 import com.commonsware.cwac.cam2.CameraFragmentInterface;
 import com.commonsware.cwac.cam2.CameraView;
 import com.commonsware.cwac.cam2.ErrorConstants;
+import com.commonsware.cwac.cam2.PNGWriter;
 import com.commonsware.cwac.cam2.PictureTransaction;
 import com.commonsware.cwac.cam2.ZoomStyle;
 import com.github.clans.fab.FloatingActionButton;
@@ -371,6 +372,8 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
         Uri output = getArguments().getParcelable(ARG_OUTPUT);
 
         PictureTransaction.Builder b = new PictureTransaction.Builder();
+
+        b.append(new PNGWriter(getActivity()));
 
         if (output != null) {
             b.toUri(getActivity(), output,
