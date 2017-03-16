@@ -129,6 +129,7 @@ public class PictureTransaction {
     public Builder toUri(Context ctxt,
             Uri output,
             boolean lossless,
+            int jpgQuality,
             boolean updateMediaStore,
             boolean skipOrientationNormalization) {
 
@@ -153,8 +154,11 @@ public class PictureTransaction {
       result
         .getProperties()
         .putBoolean(PROP_SKIP_ORIENTATION_NORMALIZATION, skipOrientationNormalization);
+      result
+              .getProperties()
+              .putInt(JPEGWriter.PROP_JPG_QUALITY, jpgQuality);
 
-      return (this);
+        return (this);
     }
   }
 }

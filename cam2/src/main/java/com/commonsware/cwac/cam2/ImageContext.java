@@ -14,14 +14,16 @@
 
 package com.commonsware.cwac.cam2;
 
+import com.android.mms.exif.ExifInterface;
+import com.android.mms.exif.ExifTag;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import com.android.mms.exif.ExifInterface;
-import com.android.mms.exif.ExifTag;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -43,6 +45,7 @@ public class ImageContext {
   private Bitmap thumbnail;
   private ExifInterface exif;
     private boolean alreadyNormalized = false;
+    private int currentQuality = 100;
 
   ImageContext(Context ctxt, byte[] jpeg) {
     this.ctxt=ctxt.getApplicationContext();
@@ -91,29 +94,23 @@ public class ImageContext {
     return(tag==null ? -1 : tag.getValueAsInt(-1));
   }
 
-  public byte[] getJpeg(boolean normalizeOrientation) {
+  public byte[] getJpeg(boolean normalizeOrientation, int quality) {
     if (normalizeOrientation) {
       try {
         int orientation=getOrientation();
 
         if (needsNormalization(orientation)) {
           try {
+            int requestedQuality = (currentQuality > quality) ? quality : currentQuality;
+
             Bitmap original=
               BitmapFactory.decodeByteArray(jpegOriginal, 0,
                 jpegOriginal.length);
             Bitmap rotated=rotateViaMatrix(original, orientation);
 
             exif.setTagValue(ExifInterface.TAG_ORIENTATION, 1);
-            exif.removeCompressedThumbnail();
-
-            ByteArrayOutputStream baos=new ByteArrayOutputStream();
-
-            exif.writeExif(rotated, baos, 100);
-            jpegOriginal=baos.toByteArray();
-
-              alreadyNormalized = true;
-
-            return(jpegOriginal);
+            jpegOriginal = recompressBitmap(exif, rotated, requestedQuality);
+            alreadyNormalized = true;
           }
           catch (OutOfMemoryError e) {
             AbstractCameraActivity.BUS
@@ -127,7 +124,31 @@ public class ImageContext {
       }
     }
 
-    return(getJpeg());
+    if (currentQuality > quality) {
+        try {
+            jpegOriginal = recompressBitmap(exif, getBitmap(true, false), quality);
+        } catch (Exception e) {
+            AbstractCameraActivity.BUS
+                    .post(new CameraEngine.DeepImpactEvent(e));
+        }
+    }
+
+      return jpegOriginal;
+  }
+
+  public byte[] recompressBitmap(ExifInterface exifInterface, Bitmap bitmap, int quality) {
+      try {
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          exifInterface.removeCompressedThumbnail();
+          exifInterface.writeExif(bitmap, baos, quality);
+          currentQuality = quality;
+          return baos.toByteArray();
+      } catch (Exception e) {
+          AbstractCameraActivity.BUS
+                  .post(new CameraEngine.DeepImpactEvent(e));
+      }
+
+      return jpegOriginal;
   }
 
   /**

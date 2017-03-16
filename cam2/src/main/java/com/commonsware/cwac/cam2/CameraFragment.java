@@ -493,7 +493,7 @@ public class CameraFragment extends Fragment
     PictureTransaction.Builder b=new PictureTransaction.Builder();
 
     if (output!=null) {
-      b.toUri(getActivity(), output, false,
+      b.toUri(getActivity(), output, false, 100,
         getArguments().getBoolean(ARG_UPDATE_MEDIA_STORE, false),
         getArguments().getBoolean(ARG_SKIP_ORIENTATION_NORMALIZATION,
           false));

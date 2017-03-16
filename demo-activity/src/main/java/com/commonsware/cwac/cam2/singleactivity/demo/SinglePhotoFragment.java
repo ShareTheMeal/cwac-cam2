@@ -428,6 +428,7 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
             b.toUri(getActivity(),
                     getImageFilename(),
                     lossless,
+                    75,
                     getArguments().getBoolean(ARG_UPDATE_MEDIA_STORE, false),
                     getArguments().getBoolean(ARG_SKIP_ORIENTATION_NORMALIZATION,
                             false));

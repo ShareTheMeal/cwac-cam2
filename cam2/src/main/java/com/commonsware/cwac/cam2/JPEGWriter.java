@@ -33,6 +33,13 @@ import static com.commonsware.cwac.cam2.PictureTransaction.PROP_UPDATE_MEDIA_STO
  */
 public class JPEGWriter extends AbstractImageProcessor {
 
+    /**
+     * Property key for int (0, 100) indicating the jpg quality when
+     * saving JPG files. Default is 100 (maximum quality).
+     */
+    public static final String PROP_JPG_QUALITY
+            = "jpgQuality";
+
   /**
    * {@inheritDoc}
    */
@@ -56,9 +63,10 @@ public class JPEGWriter extends AbstractImageProcessor {
     boolean updateMediaStore=xact
         .getProperties()
         .getBoolean(PROP_UPDATE_MEDIA_STORE, false);
+    int jpgQuality = xact.getProperties().getInt(PROP_JPG_QUALITY, 100);
     byte[] jpeg=imageContext.getJpeg(!xact
       .getProperties()
-      .getBoolean(PROP_SKIP_ORIENTATION_NORMALIZATION, false));
+      .getBoolean(PROP_SKIP_ORIENTATION_NORMALIZATION, false), jpgQuality);
 
     if (output!=null) {
       try {
