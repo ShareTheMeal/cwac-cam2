@@ -34,6 +34,7 @@ import com.commonsware.cwac.cam2.util.Size;
 import com.commonsware.cwac.cam2.util.Utils;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import android.util.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -62,7 +63,11 @@ public class CameraController implements CameraView.StateCallback {
   private int quality=0;
   private final ResultReceiver onError;
 
-  public CameraController(FocusMode focusMode,
+    private ImageSizeChooser outputImageSizeChooser;
+
+    private ImageSizeChooser previewImageSizeChooser;
+
+    public CameraController(FocusMode focusMode,
                           ResultReceiver onError,
                           boolean allowChangeFlashMode,
                           boolean isVideo) {
@@ -241,6 +246,14 @@ public class CameraController implements CameraView.StateCallback {
     this.quality=quality;
   }
 
+    public void setOutputImageSizeChooser(ImageSizeChooser imageSizeChooser) {
+        this.outputImageSizeChooser = imageSizeChooser;
+    }
+
+    public void setPreviewImageSizeChooser(ImageSizeChooser imageSizeChooser) {
+        this.previewImageSizeChooser = imageSizeChooser;
+    }
+
   public boolean canToggleFlashMode() {
     return (allowChangeFlashMode &&
       engine.supportsDynamicFlashModes() &&
@@ -314,17 +327,29 @@ public class CameraController implements CameraView.StateCallback {
       CameraView cv=getPreview(camera);
       Size pictureSize;
 
-      if (quality>0) {
-        pictureSize=Utils.getLargestPictureSize(camera);
-      }
-      else {
-        pictureSize=Utils.getSmallestPictureSize(camera);
-      }
+        Log.d("CWAC-Cam2", "CameraController.open quality " + quality);
 
-      if (camera!=null && cv.getWidth()>0 && cv.getHeight()>0) {
-        previewSize=Utils.chooseOptimalSize(camera.getPreviewSizes(),
-          cv.getWidth(), cv.getHeight(), pictureSize);
-      }
+        if (outputImageSizeChooser != null) {
+            pictureSize = outputImageSizeChooser.chooseSize(camera);
+        } else {
+            if (quality > 0) {
+                pictureSize = Utils.getLargestPictureSize(camera);
+            } else {
+                pictureSize = Utils.getSmallestPictureSize(camera);
+            }
+        }
+
+        Log.d("CWAC-Cam2", "CameraController.open pictureSize " + pictureSize.getWidth() + " * " + pictureSize.getHeight());
+
+        if (previewImageSizeChooser != null) {
+            previewSize = previewImageSizeChooser.chooseSize(camera);
+        } else {
+            if (camera != null && cv.getWidth() > 0 && cv.getHeight() > 0) {
+                previewSize = Utils.chooseOptimalSize(camera.getPreviewSizes(),
+                        cv.getWidth(), cv.getHeight(), pictureSize);
+            }
+        }
+        Log.d("CWAC-Cam2", "CameraController.open previewSize " + previewSize.getWidth() + " * " + previewSize.getHeight());
 
       SurfaceTexture texture=cv.getSurfaceTexture();
 
@@ -499,4 +524,10 @@ public class CameraController implements CameraView.StateCallback {
       return (ctlr);
     }
   }
+
+    public interface ImageSizeChooser {
+
+        Size chooseSize(CameraDescriptor descriptor);
+
+    }
 }
