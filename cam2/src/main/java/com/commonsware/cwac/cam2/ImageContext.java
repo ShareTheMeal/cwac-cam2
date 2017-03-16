@@ -42,6 +42,7 @@ public class ImageContext {
   private Bitmap bmp;
   private Bitmap thumbnail;
   private ExifInterface exif;
+    private boolean alreadyNormalized = false;
 
   ImageContext(Context ctxt, byte[] jpeg) {
     this.ctxt=ctxt.getApplicationContext();
@@ -109,6 +110,8 @@ public class ImageContext {
 
             exif.writeExif(rotated, baos, 100);
             jpegOriginal=baos.toByteArray();
+
+              alreadyNormalized = true;
 
             return(jpegOriginal);
           }
@@ -221,6 +224,7 @@ public class ImageContext {
 
         if (needsNormalization(orientation)) {
           result=rotateViaMatrix(result, orientation);
+            alreadyNormalized = true;
         }
       }
     }
@@ -237,7 +241,7 @@ public class ImageContext {
   }
 
   private boolean needsNormalization(int orientation) {
-    return(orientation==8 || orientation==3 || orientation==6);
+    return(orientation==8 || orientation==3 || orientation==6) && !alreadyNormalized;
   }
 
   static private Bitmap rotateViaMatrix(Bitmap original, int orientation) {
