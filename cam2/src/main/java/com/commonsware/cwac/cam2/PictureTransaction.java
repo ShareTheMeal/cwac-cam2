@@ -17,7 +17,7 @@ package com.commonsware.cwac.cam2;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import java.io.File;
+
 import java.util.ArrayList;
 
 /**
@@ -121,19 +121,30 @@ public class PictureTransaction {
      * @param ctxt   any Context will do
      * @param output Uri to which you have write
      *               access, where the photo should be taken
+     * @param lossless whether it should use PNG (true) or JPEG (false)
      * @param updateMediaStore true if MediaStore should be updated,
      *                         false otherwise
      * @return the Builder, for more API calls
      */
-    public Builder toUri(Context ctxt, Uri output,
-                         boolean updateMediaStore,
-                         boolean skipOrientationNormalization) {
-      JPEGWriter jpeg=(JPEGWriter)result.findProcessorByTag(JPEGWriter.class.getCanonicalName());
+    public Builder toUri(Context ctxt,
+            Uri output,
+            boolean lossless,
+            boolean updateMediaStore,
+            boolean skipOrientationNormalization) {
 
-      if (jpeg == null) {
-        jpeg=new JPEGWriter(ctxt);
-        append(jpeg);
-      }
+        if (lossless) {
+            PNGWriter png = (PNGWriter) result.findProcessorByTag(PNGWriter.class.getCanonicalName());
+            if (png == null) {
+                png = new PNGWriter(ctxt);
+                append(png);
+            }
+        } else {
+            JPEGWriter jpeg = (JPEGWriter) result.findProcessorByTag(JPEGWriter.class.getCanonicalName());
+            if (jpeg == null) {
+                jpeg = new JPEGWriter(ctxt);
+                append(jpeg);
+            }
+        }
 
       result.getProperties().putParcelable(PROP_OUTPUT, output);
       result

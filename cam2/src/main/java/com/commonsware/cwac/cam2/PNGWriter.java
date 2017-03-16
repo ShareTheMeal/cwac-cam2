@@ -48,8 +48,6 @@ public class PNGWriter extends AbstractImageProcessor {
         super(ctxt, tag);
     }
 
-    int quality = 80;
-
     /**
      * {@inheritDoc}
      */
@@ -64,7 +62,12 @@ public class PNGWriter extends AbstractImageProcessor {
             try {
                 if (output.getScheme().equals("file")) {
                     String path = output.getPath();
-                    path = path.replace(".jpg", ".png");
+                    if (path.contains(".jpg")) {
+                        path = path.replace(".jpg", ".png");
+                    } else {
+                        path = path + ".png";
+                    }
+
                     File f = new File(path);
 
                     f.getParentFile().mkdirs();

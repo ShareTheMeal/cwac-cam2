@@ -19,6 +19,12 @@
 
 package com.commonsware.cwac.cam2;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -41,10 +47,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.LinkedList;
 
@@ -490,7 +493,7 @@ public class CameraFragment extends Fragment
     PictureTransaction.Builder b=new PictureTransaction.Builder();
 
     if (output!=null) {
-      b.toUri(getActivity(), output,
+      b.toUri(getActivity(), output, false,
         getArguments().getBoolean(ARG_UPDATE_MEDIA_STORE, false),
         getArguments().getBoolean(ARG_SKIP_ORIENTATION_NORMALIZATION,
           false));

@@ -64,6 +64,11 @@ public class JPEGWriter extends AbstractImageProcessor {
       try {
         if (output.getScheme().equals("file")) {
           String path=output.getPath();
+
+            if (!path.contains(".jpg")) {
+                path = path + ".jpg";
+            }
+
           File f=new File(path);
 
           f.getParentFile().mkdirs();
