@@ -29,15 +29,12 @@ import android.Manifest;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.Toast;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AbstractCameraActivity {
@@ -51,6 +48,7 @@ public class MainActivity extends AbstractCameraActivity {
         super.onCreate(savedInstanceState);
 
         debugEnabled = true;
+        jpegQuality = 75;
     }
 
     @Override
@@ -89,10 +87,7 @@ public class MainActivity extends AbstractCameraActivity {
 
     @Override
     protected Uri getOutputUri() {
-        String filename = "cam2_" + Build.MANUFACTURER + "_" + Build.PRODUCT
-                + "_" + new SimpleDateFormat("yyyyMMdd'-'HHmmss").format(new Date());
-        filename = filename.replaceAll(" ", "_");
-        filename = filename + ".jpg";
+        String filename = "cam2_";
         File testRoot = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), filename);
 
         return Uri.fromFile(testRoot);
@@ -151,7 +146,8 @@ public class MainActivity extends AbstractCameraActivity {
     protected CameraFragmentInterface buildFragment() {
         return (SinglePhotoFragment.newPictureInstance(getOutputUri(),
                 true,
-                1,
+                640,
+                false,
                 ZoomStyle.SEEKBAR,
                 false,
                 false));

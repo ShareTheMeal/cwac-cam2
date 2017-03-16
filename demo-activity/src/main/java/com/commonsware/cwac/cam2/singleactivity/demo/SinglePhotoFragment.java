@@ -2,13 +2,14 @@ package com.commonsware.cwac.cam2.singleactivity.demo;
 
 import com.commonsware.cwac.cam2.AbstractCameraActivity;
 import com.commonsware.cwac.cam2.CameraController;
+import com.commonsware.cwac.cam2.CameraDescriptor;
 import com.commonsware.cwac.cam2.CameraEngine;
 import com.commonsware.cwac.cam2.CameraFragmentInterface;
 import com.commonsware.cwac.cam2.CameraView;
 import com.commonsware.cwac.cam2.ErrorConstants;
-import com.commonsware.cwac.cam2.PNGWriter;
 import com.commonsware.cwac.cam2.PictureTransaction;
 import com.commonsware.cwac.cam2.ZoomStyle;
+import com.commonsware.cwac.cam2.util.Size;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -34,11 +35,13 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 
 public class SinglePhotoFragment extends Fragment implements CameraFragmentInterface {
 
-    private static final String ARG_OUTPUT = "output";
+    private static final String ARG_OUTPUT_FOLDER_AND_PREFIX = "output";
 
     private static final String ARG_UPDATE_MEDIA_STORE =
             "updateMediaStore";
@@ -46,7 +49,9 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
     private static final String ARG_SKIP_ORIENTATION_NORMALIZATION
             = "skipOrientationNormalization";
 
-    private static final String ARG_QUALITY = "quality";
+    private static final String ARG_SMALLEST_SIZE = "smallestSize";
+
+    private static final String ARG_LOSSLESS = "lossless";
 
     private static final String ARG_ZOOM_STYLE = "zoomStyle";
 
@@ -73,20 +78,28 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
 
     private SeekBar zoomSlider;
 
+    private int minSize;
+
+    private boolean lossless;
+
+    private Uri outputFolderAndPrefix;
+
     public static SinglePhotoFragment newPictureInstance(Uri output,
             boolean updateMediaStore,
-            int quality,
+            int minSize,
+            boolean lossless,
             ZoomStyle zoomStyle,
             boolean facingExactMatch,
             boolean skipOrientationNormalization) {
         SinglePhotoFragment f = new SinglePhotoFragment();
         Bundle args = new Bundle();
 
-        args.putParcelable(ARG_OUTPUT, output);
+        args.putParcelable(ARG_OUTPUT_FOLDER_AND_PREFIX, output);
         args.putBoolean(ARG_UPDATE_MEDIA_STORE, updateMediaStore);
         args.putBoolean(ARG_SKIP_ORIENTATION_NORMALIZATION,
                 skipOrientationNormalization);
-        args.putInt(ARG_QUALITY, quality);
+        args.putInt(ARG_SMALLEST_SIZE, minSize);
+        args.putBoolean(ARG_LOSSLESS, lossless);
         args.putSerializable(ARG_ZOOM_STYLE, zoomStyle);
         args.putBoolean(ARG_FACING_EXACT_MATCH, facingExactMatch);
         f.setArguments(args);
@@ -102,6 +115,10 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        minSize = getArguments().getInt(ARG_SMALLEST_SIZE, 0);
+        lossless = getArguments().getBoolean(ARG_LOSSLESS, false);
+        outputFolderAndPrefix = getArguments().getParcelable(ARG_OUTPUT_FOLDER_AND_PREFIX);
 
         setRetainInstance(true);
         scaleDetector =
@@ -285,7 +302,32 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
         }
 
         this.ctlr = ctlr;
-        ctlr.setQuality(getArguments().getInt(ARG_QUALITY, 1));
+        this.ctlr.setOutputImageSizeChooser(new CameraController.ImageSizeChooser() {
+            @Override
+            public Size chooseSize(CameraDescriptor descriptor) {
+                Size result = null;
+
+                int idealArea = minSize * minSize;
+                int difference = idealArea;
+
+                for (Size size : descriptor.getPictureSizes()) {
+                    if (result == null) {
+                        result = size;
+                    } else {
+                        if (size.getWidth() >= minSize && size.getHeight() >= minSize) {
+                            int newArea = size.getWidth() * size.getHeight();
+                            if (newArea - idealArea < difference) {
+                                difference = newArea - idealArea;
+                                result = size;
+                            }
+                        }
+                    }
+                }
+
+                Log.d("CWAC-Cam2", "SinglePhotoFragment.setController ImageSizeChooser chose " + result.getWidth() + " * " + result.getHeight());
+                return result;
+            }
+        });
 
         if (currentCamera > -1) {
             ctlr.setCurrentCamera(currentCamera);
@@ -368,15 +410,24 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
         //do nothing
     }
 
-    private void takePicture() {
-        Uri output = getArguments().getParcelable(ARG_OUTPUT);
+    private Uri getImageFilename() {
+        String filename = Build.MANUFACTURER + "_" + Build.PRODUCT
+                + "_" + new SimpleDateFormat("yyyyMMdd'-'HHmmss").format(new Date());
+        filename = filename.replaceAll(" ", "_");
 
+        Uri finalUri = Uri.parse(outputFolderAndPrefix.toString() + filename);
+        Log.d("CWAC-Cam2", "SinglePhotoFragment.getImageFilename finalUri = " + finalUri);
+
+        return finalUri;
+    }
+
+    private void takePicture() {
         PictureTransaction.Builder b = new PictureTransaction.Builder();
 
-        b.append(new PNGWriter(getActivity()));
-
-        if (output != null) {
-            b.toUri(getActivity(), output,
+        if (outputFolderAndPrefix != null) {
+            b.toUri(getActivity(),
+                    getImageFilename(),
+                    lossless,
                     getArguments().getBoolean(ARG_UPDATE_MEDIA_STORE, false),
                     getArguments().getBoolean(ARG_SKIP_ORIENTATION_NORMALIZATION,
                             false));
