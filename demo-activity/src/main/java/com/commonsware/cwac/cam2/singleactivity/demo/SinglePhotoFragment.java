@@ -7,6 +7,7 @@ import com.commonsware.cwac.cam2.CameraEngine;
 import com.commonsware.cwac.cam2.CameraFragmentInterface;
 import com.commonsware.cwac.cam2.CameraView;
 import com.commonsware.cwac.cam2.ErrorConstants;
+import com.commonsware.cwac.cam2.ImageCropper;
 import com.commonsware.cwac.cam2.PictureTransaction;
 import com.commonsware.cwac.cam2.ZoomStyle;
 import com.commonsware.cwac.cam2.util.Size;
@@ -423,6 +424,8 @@ public class SinglePhotoFragment extends Fragment implements CameraFragmentInter
 
     private void takePicture() {
         PictureTransaction.Builder b = new PictureTransaction.Builder();
+
+        b.append(new ImageCropper(getActivity(), "ImageCropper", 640, 640, true));
 
         if (outputFolderAndPrefix != null) {
             b.toUri(getActivity(),
