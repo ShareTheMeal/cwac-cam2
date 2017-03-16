@@ -23,35 +23,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+import static com.commonsware.cwac.cam2.PictureTransaction.PROP_OUTPUT;
+import static com.commonsware.cwac.cam2.PictureTransaction.PROP_SKIP_ORIENTATION_NORMALIZATION;
+import static com.commonsware.cwac.cam2.PictureTransaction.PROP_UPDATE_MEDIA_STORE;
+
 /**
  * ImageProcessor that writes a PNG file out to some form
  * of local storage. At present, it supports writing out to a
  * local filesystem path.
  */
 public class PNGWriter extends AbstractImageProcessor {
-
-    /**
-     * Property key to identify the Uri where
-     * the image should be written. Look up the value for this
-     * property in the PictureTransaction.
-     */
-    public static final String PROP_OUTPUT = "output";
-
-    /**
-     * Property key to identify if the MediaStore should be
-     * updated to reflect the written-out picture (boolean).
-     * Look up the value for this property in the PictureTransaction.
-     * Only relevant if PROP_OUTPUT has a file scheme.
-     */
-    public static final String PROP_UPDATE_MEDIA_STORE = "update";
-
-    /**
-     * Property key for boolean indicating if we should skip the
-     * default logic to rotate the image based on the EXIF orientation
-     * tag. Defaults to false (meaning: do the rotation if needed).
-     */
-    public static final String PROP_SKIP_ORIENTATION_NORMALIZATION
-            = "skipOrientationNormalization";
 
     /**
      * {@inheritDoc}

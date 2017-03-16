@@ -26,6 +26,30 @@ import java.util.ArrayList;
  * an instance. Beyond that, this is an opaque blob to you.
  */
 public class PictureTransaction {
+
+    /**
+     * Property key to identify the Uri where
+     * the image should be written. Look up the value for this
+     * property in the PictureTransaction.
+     */
+    public static final String PROP_OUTPUT = "output";
+
+    /**
+     * Property key to identify if the MediaStore should be
+     * updated to reflect the written-out picture (boolean).
+     * Look up the value for this property in the PictureTransaction.
+     * Only relevant if PROP_OUTPUT has a file scheme.
+     */
+    public static final String PROP_UPDATE_MEDIA_STORE = "update";
+
+    /**
+     * Property key for boolean indicating if we should skip the
+     * default logic to rotate the image based on the EXIF orientation
+     * tag. Defaults to false (meaning: do the rotation if needed).
+     */
+    public static final String PROP_SKIP_ORIENTATION_NORMALIZATION
+            = "skipOrientationNormalization";
+
   private ArrayList<ImageProcessor> processors=new ArrayList<ImageProcessor>();
   private Bundle props=new Bundle();
 
@@ -111,16 +135,13 @@ public class PictureTransaction {
         append(jpeg);
       }
 
-      result.getProperties().putParcelable(JPEGWriter.PROP_OUTPUT,
-          output);
+      result.getProperties().putParcelable(PROP_OUTPUT, output);
       result
           .getProperties()
-          .putBoolean(JPEGWriter.PROP_UPDATE_MEDIA_STORE,
-              updateMediaStore);
+          .putBoolean(PROP_UPDATE_MEDIA_STORE, updateMediaStore);
       result
         .getProperties()
-        .putBoolean(JPEGWriter.PROP_SKIP_ORIENTATION_NORMALIZATION,
-          skipOrientationNormalization);
+        .putBoolean(PROP_SKIP_ORIENTATION_NORMALIZATION, skipOrientationNormalization);
 
       return (this);
     }
