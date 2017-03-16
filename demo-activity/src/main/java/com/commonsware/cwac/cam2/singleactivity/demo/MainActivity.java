@@ -31,6 +31,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -48,7 +49,6 @@ public class MainActivity extends AbstractCameraActivity {
         super.onCreate(savedInstanceState);
 
         debugEnabled = true;
-        jpegQuality = 75;
     }
 
     @Override
@@ -105,7 +105,16 @@ public class MainActivity extends AbstractCameraActivity {
                             .getJpeg().length, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "error getting image = " + event.exception, Toast.LENGTH_SHORT).show();
-            finish();
+            Log.d("CWAC-Cam2", "MainActivity PictureTakenEvent exception = " + event.exception);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(CameraEngine.DeepImpactEvent event) {
+        if (event.exception != null) {
+            Toast.makeText(this, "error = " + event.exception, Toast.LENGTH_SHORT).show();
+            Log.d("CWAC-Cam2", "MainActivity DeepImpactEvent = " + event.exception);
         }
     }
 
