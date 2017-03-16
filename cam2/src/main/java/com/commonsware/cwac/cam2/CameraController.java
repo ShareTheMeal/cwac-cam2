@@ -67,15 +67,19 @@ public class CameraController implements CameraView.StateCallback {
 
     private ImageSizeChooser previewImageSizeChooser;
 
+    private int jpegQuality = 100;
+
     public CameraController(FocusMode focusMode,
                           ResultReceiver onError,
                           boolean allowChangeFlashMode,
-                          boolean isVideo) {
+                          boolean isVideo,
+                          int jpegQuality) {
     this.onError=onError;
     this.focusMode=focusMode==null ?
       FocusMode.CONTINUOUS : focusMode;
     this.isVideo=isVideo;
     this.allowChangeFlashMode=allowChangeFlashMode;
+        this.jpegQuality = jpegQuality;
   }
 
   /**
@@ -327,7 +331,7 @@ public class CameraController implements CameraView.StateCallback {
       CameraView cv=getPreview(camera);
       Size pictureSize;
 
-        Log.d("CWAC-Cam2", "CameraController.open quality " + quality);
+        Log.d("CWAC-Cam2", "CameraController.open quality " + quality + ", jpegQuality = " + jpegQuality);
 
         if (outputImageSizeChooser != null) {
             pictureSize = outputImageSizeChooser.chooseSize(camera);
@@ -365,7 +369,7 @@ public class CameraController implements CameraView.StateCallback {
         session=engine
           .buildSession(cv.getContext(), camera)
           .addPlugin(new SizeAndFormatPlugin(previewSize,
-            pictureSize, ImageFormat.JPEG))
+            pictureSize, ImageFormat.JPEG, jpegQuality))
           .addPlugin(new OrientationPlugin(cv.getContext()))
           .addPlugin(
             new FocusModePlugin(cv.getContext(), focusMode, isVideo))

@@ -108,6 +108,13 @@ abstract public class AbstractCameraActivity extends Activity {
     public static final String EXTRA_DEBUG_ENABLED = "cwac_cam2_debug";
 
     /**
+     * Extra name for indicating the quality of the JPEG image
+     * returned by the camera, if JPEG is used as format.
+     * Default is 100 (maximum).
+     */
+    public static final String EXTRA_JPEG_QUALITY = "cwac_cam2_jpeg_quality";
+
+    /**
      * Extra name for indicating if MediaStore should be updated
      * to reflect a newly-taken picture. Only relevant if
      * a file:// Uri is used. Default to false.
@@ -191,6 +198,8 @@ abstract public class AbstractCameraActivity extends Activity {
 
     protected boolean mirrorPreview;
 
+    protected int jpegQuality;
+
     /**
      * @return true if the activity wants FEATURE_ACTION_BAR_OVERLAY,
      * false otherwise
@@ -272,6 +281,8 @@ abstract public class AbstractCameraActivity extends Activity {
 
         debugEnabled = getIntent().getBooleanExtra(EXTRA_DEBUG_ENABLED, false);
 
+        jpegQuality = getIntent().getIntExtra(EXTRA_JPEG_QUALITY, 100);
+
         if (needsOverlay()) {
             getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
@@ -301,6 +312,12 @@ abstract public class AbstractCameraActivity extends Activity {
                 ab.hide();
             }
         }
+    }
+
+    @TargetApi(23)
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
 
         if (useRuntimePermissions()) {
             String[] perms = netPermissions(getNeededPermissions());
@@ -426,7 +443,7 @@ abstract public class AbstractCameraActivity extends Activity {
 
         CameraController ctrl =
                 new CameraController(focusMode, onError,
-                        allowChangeFlashMode, isVideo());
+                        allowChangeFlashMode, isVideo(), jpegQuality);
 
         cameraFrag.setController(ctrl);
         cameraFrag.setMirrorPreview(mirrorPreview);

@@ -14,25 +14,23 @@
 
 package com.commonsware.cwac.cam2.plugin;
 
-import android.annotation.TargetApi;
-import android.graphics.Point;
-import android.hardware.Camera;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CaptureRequest;
-import android.media.CamcorderProfile;
-import android.media.ImageReader;
-import android.media.MediaRecorder;
-import android.os.Build;
 import com.commonsware.cwac.cam2.CameraConfigurator;
 import com.commonsware.cwac.cam2.CameraConstraints;
 import com.commonsware.cwac.cam2.CameraPlugin;
 import com.commonsware.cwac.cam2.CameraSession;
-import com.commonsware.cwac.cam2.CameraTwoConfigurator;
 import com.commonsware.cwac.cam2.ClassicCameraConfigurator;
 import com.commonsware.cwac.cam2.SimpleCameraTwoConfigurator;
 import com.commonsware.cwac.cam2.SimpleClassicCameraConfigurator;
 import com.commonsware.cwac.cam2.VideoTransaction;
 import com.commonsware.cwac.cam2.util.Size;
+
+import android.annotation.TargetApi;
+import android.graphics.ImageFormat;
+import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.ImageReader;
+import android.media.MediaRecorder;
+import android.os.Build;
 
 /**
  * A plugin that configures the size and format of previews and
@@ -43,6 +41,7 @@ public class SizeAndFormatPlugin implements CameraPlugin {
   final private Size pictureSize;
   final private Size previewSize;
   private final int pictureFormat;
+    private final int jpegQuality;
 
   /**
    * Constructor.
@@ -52,11 +51,13 @@ public class SizeAndFormatPlugin implements CameraPlugin {
    * @param pictureFormat the format of pictures to be taken, in
    *                      the form of an ImageFormat constant
    *                      (e.g., ImageFormat.JPEG)
+   * @param jpegQuality if pictureFormat is jpeg, sets the jpeg quality
    */
-  public SizeAndFormatPlugin(Size previewSize, Size pictureSize, int pictureFormat) {
+  public SizeAndFormatPlugin(Size previewSize, Size pictureSize, int pictureFormat, int jpegQuality) {
     this.previewSize=previewSize;
     this.pictureSize=pictureSize;
     this.pictureFormat=pictureFormat;
+      this.jpegQuality = jpegQuality;
   }
 
   /**
@@ -108,6 +109,9 @@ public class SizeAndFormatPlugin implements CameraPlugin {
         params.setPictureSize(pictureSize.getWidth(),
           pictureSize.getHeight());
         params.setPictureFormat(pictureFormat);
+          if (pictureFormat == ImageFormat.JPEG) {
+              params.setJpegQuality(jpegQuality);
+          }
       }
 
       return(params);
