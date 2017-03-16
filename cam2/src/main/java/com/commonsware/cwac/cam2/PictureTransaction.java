@@ -34,8 +34,9 @@ public class PictureTransaction {
   }
 
   ImageContext process(ImageContext imageContext) {
+
     for (ImageProcessor processor : processors) {
-      processor.process(this, imageContext);
+      imageContext = processor.process(this, imageContext);
     }
 
     return(imageContext);

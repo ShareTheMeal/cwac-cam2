@@ -68,7 +68,7 @@ public class JPEGWriter extends AbstractImageProcessor {
    * {@inheritDoc}
    */
   @Override
-  public void process(PictureTransaction xact, ImageContext imageContext) {
+  public ImageContext process(PictureTransaction xact, ImageContext imageContext) {
     Uri output=xact.getProperties().getParcelable(PROP_OUTPUT);
     boolean updateMediaStore=xact
         .getProperties()
@@ -111,5 +111,6 @@ public class JPEGWriter extends AbstractImageProcessor {
         AbstractCameraActivity.BUS.post(new CameraEngine.DeepImpactEvent(e));
       }
     }
+    return imageContext;
   }
 }

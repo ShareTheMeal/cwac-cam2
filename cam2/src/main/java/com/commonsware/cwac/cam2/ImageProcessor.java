@@ -29,7 +29,7 @@ public interface ImageProcessor {
    * @param xact the PictureTransaction, containing properties
    * @param imageContext the picture itself
    */
-  void process(PictureTransaction xact, ImageContext imageContext);
+  ImageContext process(PictureTransaction xact, ImageContext imageContext);
 
   /**
    * @return a unique tag to identify this processor among
