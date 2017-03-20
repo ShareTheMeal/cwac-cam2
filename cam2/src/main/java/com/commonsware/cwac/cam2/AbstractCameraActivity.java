@@ -432,13 +432,18 @@ abstract public class AbstractCameraActivity extends Activity {
     }
 
     protected void init() {
-        cameraFrag = (CameraFragmentInterface) getFragmentManager().findFragmentByTag(TAG_CAMERA);
+        if (cameraFrag == null) {
+            cameraFrag = (CameraFragmentInterface) getFragmentManager().findFragmentByTag(TAG_CAMERA);
+        }
 
         boolean fragNeedsToBeAdded = false;
 
         if (cameraFrag == null) {
             cameraFrag = buildFragment();
-            fragNeedsToBeAdded = true;
+
+            if (cameraFrag instanceof Fragment) {
+                fragNeedsToBeAdded = true;
+            }
         }
 
         CameraController ctrl =
