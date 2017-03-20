@@ -269,7 +269,7 @@ abstract public class AbstractCameraActivityIntentBuilder<T extends AbstractCame
      * @param q LOW or HIGH
      * @return the builder, for further configuration
      */
-    public T quality(AbstractCameraActivity.Quality q) {
+    public T quality(ImageQuality q) {
         result.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, q.getValue());
 
         return ((T) this);

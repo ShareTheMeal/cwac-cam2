@@ -526,18 +526,4 @@ abstract public class AbstractCameraActivity extends Activity {
         return (result.toArray(new String[result.size()]));
     }
 
-    public enum Quality {
-        LOW(0), HIGH(1);
-
-        private final int value;
-
-        private Quality(int value) {
-            this.value = value;
-        }
-
-        int getValue() {
-            return (value);
-        }
-    }
-
 }
