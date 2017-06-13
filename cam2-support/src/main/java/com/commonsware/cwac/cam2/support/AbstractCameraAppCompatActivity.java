@@ -12,8 +12,16 @@
  * limitations under the License.
  */
 
-package com.commonsware.cwac.cam2;
+package com.commonsware.cwac.cam2.support;
 
+import com.commonsware.cwac.cam2.CameraController;
+import com.commonsware.cwac.cam2.CameraEngine;
+import com.commonsware.cwac.cam2.CameraFragment;
+import com.commonsware.cwac.cam2.CameraFragmentInterface;
+import com.commonsware.cwac.cam2.CameraSelectionCriteria;
+import com.commonsware.cwac.cam2.Facing;
+import com.commonsware.cwac.cam2.FocusMode;
+import com.commonsware.cwac.cam2.OrientationLockMode;
 import com.commonsware.cwac.cam2.util.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,8 +29,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ClipData;
 import android.content.pm.PackageManager;
@@ -32,10 +38,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 
 import java.util.ArrayList;
 
@@ -49,7 +53,7 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
  * Base class for activities that integrate with CameraFragment
  * for taking pictures or recording video.
  */
-abstract public class AbstractCameraActivity extends Activity {
+abstract public class AbstractCameraAppCompatActivity extends AppCompatActivity {
 
     /**
      * List<FlashMode> indicating the desired flash modes,
@@ -179,10 +183,6 @@ abstract public class AbstractCameraActivity extends Activity {
 
     protected FocusMode focusMode;
 
-    protected Intent buildResultIntent() {
-        return (new Intent());
-    }
-
     protected boolean allowChangeFlashMode;
 
     protected ResultReceiver onError;
@@ -198,19 +198,6 @@ abstract public class AbstractCameraActivity extends Activity {
     protected boolean mirrorPreview;
 
     protected int jpegQuality;
-
-    /**
-     * @return true if the activity wants FEATURE_ACTION_BAR_OVERLAY,
-     * false otherwise
-     */
-
-    abstract protected boolean needsOverlay();
-
-    /**
-     * @return false if we should hide the action bar outright
-     * (ignored if needsOverlay() returns true)
-     */
-    abstract protected boolean needsActionBar();
 
     /**
      * @return true if we are recording a video, false if we are
@@ -282,42 +269,17 @@ abstract public class AbstractCameraActivity extends Activity {
         debugEnabled = getIntent().getBooleanExtra(EXTRA_DEBUG_ENABLED, false);
 
         jpegQuality = getIntent().getIntExtra(EXTRA_JPEG_QUALITY, 100);
-
-        if (needsOverlay()) {
-            getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-
-            // the following is nasty stuff to get rid of the action
-            // bar drop shadow, which still exists on some devices
-            // despite going into overlay mode (Samsung Galaxy S3, I'm
-            // looking at you)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ActionBar ab = getActionBar();
-
-                if (ab != null) {
-                    getActionBar().setElevation(0);
-                }
-            } else {
-                View v = ((ViewGroup) getWindow().getDecorView()).getChildAt(0);
-
-                if (v != null) {
-                    v.setWillNotDraw(true);
-                }
-            }
-
-        } else if (!needsActionBar()) {
-            ActionBar ab = getActionBar();
-
-            if (ab != null) {
-                ab.hide();
-            }
-        }
     }
 
     @TargetApi(23)
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
+        //we remove the shadow
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setElevation(0);
+        }
 
         if (useRuntimePermissions()) {
             String[] perms = netPermissions(getNeededPermissions());

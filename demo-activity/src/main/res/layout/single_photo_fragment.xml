@@ -67,17 +67,4 @@
     android:max="100"
     android:visibility="gone" />
 
-  <Chronometer
-    android:id="@+id/chrono"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    android:layout_marginEnd="@dimen/cwac_cam2_fragment_chrono_margin"
-    android:layout_marginRight="@dimen/cwac_cam2_fragment_chrono_margin"
-    android:layout_marginTop="@dimen/cwac_cam2_fragment_chrono_margin"
-    android:background="@color/cwac_cam2_chrono_background"
-    android:padding="4dp"
-    android:visibility="gone" />
 </RelativeLayout>

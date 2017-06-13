@@ -14,6 +14,14 @@
 
 package com.commonsware.cwac.cam2.playground;
 
+import com.commonsware.cwac.cam2.ChronoType;
+import com.commonsware.cwac.cam2.Facing;
+import com.commonsware.cwac.cam2.FocusMode;
+import com.commonsware.cwac.cam2.ImageQuality;
+import com.commonsware.cwac.cam2.OrientationLockMode;
+import com.commonsware.cwac.cam2.VideoRecorderActivity;
+import com.commonsware.cwac.cam2.ZoomStyle;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -29,13 +37,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
-import com.commonsware.cwac.cam2.AbstractCameraActivity;
-import com.commonsware.cwac.cam2.ChronoType;
-import com.commonsware.cwac.cam2.Facing;
-import com.commonsware.cwac.cam2.FocusMode;
-import com.commonsware.cwac.cam2.OrientationLockMode;
-import com.commonsware.cwac.cam2.VideoRecorderActivity;
-import com.commonsware.cwac.cam2.ZoomStyle;
+
 import java.io.File;
 
 public class VideoFragment extends PreferenceFragment {
@@ -95,10 +97,10 @@ public class VideoFragment extends PreferenceFragment {
       .setOutput(FileProvider.getUriForFile(getActivity(), AUTHORITY, f));
 
     if (prefs.getBoolean("highQuality", false)) {
-      b.quality(AbstractCameraActivity.Quality.HIGH);
+      b.quality(ImageQuality.HIGH);
     }
     else {
-      b.quality(AbstractCameraActivity.Quality.LOW);
+      b.quality(ImageQuality.LOW);
     }
 
     if (prefs.getBoolean("ffc", false)) {
