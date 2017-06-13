@@ -94,7 +94,7 @@ public class VideoRecorderActivity extends AbstractCameraActivity {
       findViewById(android.R.id.content).post(new Runnable() {
         @Override
         public void run() {
-         setResult(RESULT_OK, new Intent().setData(getOutputUri()));
+         setResult(RESULT_OK, buildResultIntent().setData(getOutputUri()));
          finish();
         }
       });

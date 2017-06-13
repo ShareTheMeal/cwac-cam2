@@ -12,7 +12,7 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     debugCompile project(':cam2')
-    releaseCompile 'com.commonsware.cwac:cam2:0.7.5'
+    releaseCompile 'com.commonsware.cwac:cam2:0.7.6'
 }
 
 android {

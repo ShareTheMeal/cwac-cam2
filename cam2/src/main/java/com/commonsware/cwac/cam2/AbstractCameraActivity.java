@@ -184,6 +184,10 @@ abstract public class AbstractCameraActivity extends Activity {
 
     protected FocusMode focusMode;
 
+    protected Intent buildResultIntent() {
+        return (new Intent());
+    }
+
     protected boolean allowChangeFlashMode;
 
     protected ResultReceiver onError;
@@ -204,6 +208,7 @@ abstract public class AbstractCameraActivity extends Activity {
      * @return true if the activity wants FEATURE_ACTION_BAR_OVERLAY,
      * false otherwise
      */
+
     abstract protected boolean needsOverlay();
 
     /**

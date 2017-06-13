@@ -224,6 +224,7 @@ public class CameraController implements CameraView.StateCallback {
    */
   public void takePicture(PictureTransaction xact) {
     if (session!=null) {
+      AbstractCameraActivity.BUS.post(new PictureCaptureStartEvent());
       engine.takePicture(session, xact);
     }
   }
@@ -534,4 +535,8 @@ public class CameraController implements CameraView.StateCallback {
         Size chooseSize(CameraDescriptor descriptor);
 
     }
+    
+  public static class PictureCaptureStartEvent {
+
+  }
 }

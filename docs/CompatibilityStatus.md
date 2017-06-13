@@ -62,6 +62,7 @@
 | SONY Xperia Z Ultra (C6802)    | `Sony`/`C6802`              | 5.1.1   | |
 | Tesco (Pegatron) hudl 2        | `Pegatron`/`HTF8A4XX`       | 5.1     | [294](https://github.com/commonsguy/cwac-cam2/issues/294) |
 | Wileyfox Swift                 | `Wileyfox`/`Swift`          | 6.0.1 (CM 12.1) | |
+| Xiamoi Redmi 4A                | `Xiaomi`/`rolex`            | 6.0.1   | |
 
 ## Version 0.6.x
 | Device                         | Identifier                  | Version | Issues |

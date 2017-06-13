@@ -209,6 +209,10 @@ public class CameraConstraints {
       .product("Swift")
       .supportsCameraTwo(false)
       .build());
+    add(new Builder()
+      .manufacturer("LGE")
+      .supportsCameraTwo(false)
+      .build());
 
     CameraConstraints match=null;
 
@@ -276,10 +280,6 @@ public class CameraConstraints {
   }
 
   public boolean supportsCameraTwo() {
-    if (Build.MANUFACTURER.equals("LGE")) {
-      return(false);
-    }
-
     return(supportsCameraTwo);
   }
 
@@ -323,7 +323,7 @@ public class CameraConstraints {
     private Pattern manufacturer;
     private Pattern product;
     private Pattern model;
-    private boolean supportsCameraTwo=true;
+    private boolean supportsCameraTwo=false;
     private int highCamcorderProfile=CamcorderProfile.QUALITY_HIGH;
     private boolean disableFocusMode=false;
     private int cameraDisplayOrientation=-1;

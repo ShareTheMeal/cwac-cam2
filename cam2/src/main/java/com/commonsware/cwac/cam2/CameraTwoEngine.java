@@ -389,31 +389,34 @@ public class CameraTwoEngine extends CameraEngine {
   public boolean zoomTo(CameraSession session,
                          int zoomLevel) {
     final Session s=(Session)session;
-    final Descriptor descriptor=(Descriptor)session.getDescriptor();
 
-    if (s.previewRequest!=null) {
-      try {
-        final CameraCharacteristics cc=
-          mgr.getCameraCharacteristics(descriptor.cameraId);
-        final float maxZoom=
-          cc.get(
-            CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
+    if (session!=null) {
+      final Descriptor descriptor=(Descriptor)session.getDescriptor();
 
-        // if <=1, zoom not possible, so eat the the event
-        if (maxZoom>1.0f) {
-          float zoomTo=1.0f+((float)zoomLevel*(maxZoom-1.0f)/100.0f);
-          Rect zoomRect=cropRegionForZoom(cc, zoomTo);
+      if (s.previewRequest!=null) {
+        try {
+          final CameraCharacteristics cc=
+            mgr.getCameraCharacteristics(descriptor.cameraId);
+          final float maxZoom=
+            cc.get(
+              CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
 
-          s.previewRequestBuilder
-            .set(CaptureRequest.SCALER_CROP_REGION, zoomRect);
-          s.setZoomRect(zoomRect);
-          s.previewRequest=s.previewRequestBuilder.build();
-          s.captureSession.setRepeatingRequest(s.previewRequest,
-            null, handler);
+          // if <=1, zoom not possible, so eat the the event
+          if (maxZoom>1.0f) {
+            float zoomTo=1.0f+((float)zoomLevel*(maxZoom-1.0f)/100.0f);
+            Rect zoomRect=cropRegionForZoom(cc, zoomTo);
+
+            s.previewRequestBuilder
+              .set(CaptureRequest.SCALER_CROP_REGION, zoomRect);
+            s.setZoomRect(zoomRect);
+            s.previewRequest=s.previewRequestBuilder.build();
+            s.captureSession.setRepeatingRequest(s.previewRequest,
+              null, handler);
+          }
         }
-      }
-      catch (CameraAccessException e) {
-        getBus().post(new DeepImpactEvent(e));
+        catch (CameraAccessException e) {
+          getBus().post(new DeepImpactEvent(e));
+        }
       }
     }
 
